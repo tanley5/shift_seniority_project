@@ -1,0 +1,35 @@
+{% extends "_base.html" %}
+
+{% load static %}
+
+{% block title %}
+Shift Lists
+{% endblock title %}
+
+{% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Report Name</th>
+            <th scope="col">Shift</th>
+            <th scope="col">Agent Email</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <h1 class="text-center">Shift List</h1>
+        {% for shift in object_list %}
+        <tr>
+            <th scope="row">{{shift.report_name}}</th>
+            <td>{{shift.shift}}</td>
+            <td>{{shift.agent_email}}</td>
+            <td><a href="{% url 'shift_update' shift.pk %}" class="btn btn-success">Edit</a></td>
+            <td><a href="{% url 'shift_delete' shift.pk %}" class="btn btn-danger">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<hr>
+
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends '_base.html' %}
+
+{% load static %}
+
+{% block title %}
+Shiftbid Homepage
+{% endblock title %}
+
+{% block content %}
+<h1 class="text-center">This is the Shiftbid homepage</h1>
+<div class="container">
+    <p class="text-center"><strong>Shiftbid Actions:</strong></p>
+    <div class="list-group">
+        <a href="{% url 'shiftbid_create' %}" class="list-group-item list-group-item-action text-center">CREATE</a>
+        <a href="{% url 'shift_list_admin' %}" class="list-group-item list-group-item-action text-center">Shift Admin
+            VIEW</a>
+        <a href="{% url 'shift_list' %}" class="list-group-item list-group-item-action text-center">VIEW</a>
+    </div>
+    <hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary" name="run_script">Run script</button>
+    </form>
+</div>
+{% endblock content %}
