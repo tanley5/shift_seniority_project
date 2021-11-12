@@ -5,11 +5,14 @@ from django import forms
 
 import threading
 
-from django.urls.base import reverse_lazy
+from django.urls import reverse_lazy
+from django.urls import reverse
+
+from django.core.mail import send_mail
+from django.conf import settings
 
 from shift.models import Shift
 from seniority.models import Seniority
-# from shiftbid.forms import ShiftbidResponseForm
 
 from .response_handler import handle_response_submission
 
@@ -19,7 +22,6 @@ report_name = ""
 
 
 def test_run():
-    # print('Ran on click')
     get_report_name()
 
 
@@ -31,13 +33,12 @@ def get_report_name():
         for report in report_name:
             report_name_list.append(report)
 
-    # print(report_name_list)
-
     for data in report_name_list:
-        t = threading.Thread(
-            target=spawn_child_elements, args=(data,), kwargs={})
-        t.setDaemon(True)
-        t.start()
+        # t = threading.Thread(
+        #     target=spawn_child_elements, args=(data,), kwargs={})
+        # t.setDaemon(True)
+        # t.start()
+        spawn_child_elements(data)
 
 
 def spawn_child_elements(report_name):
@@ -47,6 +48,7 @@ def spawn_child_elements(report_name):
         agent_email__contains='@email.com')
 
     create_url(report_name)
+    email_function(report_name, seniority_query)
 
 
 def create_url(report_name):
@@ -80,3 +82,22 @@ def create_view(request, report_name):
 
     else:
         return render(request, "shiftbid/shiftbid_response.html", {'form': form, 'report_name': report_name})
+
+
+def email_function(report_name, seniority_query):
+    recipients = query_to_list(seniority_query)
+    print(recipients)
+    link = f'shiftbid/shiftbid_response/{report_name}'
+    message = f"This is the Shiftbid for - {report_name}; Use this link: {link}"
+    subject = f"This is the Shiftbid for - {report_name}"
+
+    send_mail(subject=subject, message=message,
+              from_email=settings.EMAIL_HOST_USER, recipient_list=recipients)
+
+
+def query_to_list(query):
+    recipients = []
+    for i in list(query):
+        recipients.append(i.agent_email)
+    # print(recipients)
+    return ['tanleybench@gmail.com'] if len(recipients) == 0 else recipients
